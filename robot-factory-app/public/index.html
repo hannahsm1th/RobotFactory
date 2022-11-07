@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width", initial-scale="1.0">
+        <title>Factory Robot simulation</title>
+        <link rel="stylesheet" href="css/styles.css">
+        <link rel="icon" type="image/png" href="/favicon-16x16.png">
+        <link rel="icon" type="image/png" href="/favicon-32x32.png">
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.2/dist/leaflet.css"
+            integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14="
+            crossorigin=""/>
+        <script src="https://unpkg.com/leaflet@1.9.2/dist/leaflet.js"
+            integrity="sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg="
+            crossorigin=""></script>
+    </head>
+    <body>
+        <div class="wrapper">
+            <div class="image-container">
+                <img class="robot-image" src="/chatbot.png" alt="robot image">
+            </div>
+            <div class="overlay">
+                <div class="overlay-text">by Hannah Smith</div>
+            </div>
+        </div>
+        <h2>factory devices</h2>
+        <div id="map"></div>
+
+        <div id="directory">
+            <h3>Directory</h3>
+            <ul>
+                <li><a href="/robots">View the robot data in a table.</a></li>
+                <li><a href="/chargers">View the charger data in a table.</a></li>
+                <li><a href="/robot-data">View the robot data.</a></li>
+                <li><a href="/charger-data">View the charger data.</a></li>
+            </ul>
+        </div>
+
+        <div id="attributions">
+            <h4>Attributions</h4>
+            <ul>
+                <li><a href="https://www.flaticon.com/free-icons/compass" title="compass icons">Compass icons created by Freepik - Flaticon</a></li>
+                <li><a href="https://www.flaticon.com/free-icons/robot" title="robot icons">Robot icons created by Freepik - Flaticon</a></li>
+            </ul>
+        </div>
+
+        <script>
+            // Map setup
+            const map = L.map('map').setView([-37.84691, 145.11468], 19);
+            const attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+            const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+            const tiles = L.tileLayer(tileUrl, { attribution });
+            let markers = [];
+            let circles = [];
+            tiles.addTo(map);
+            // Making a marker with a custom icon
+            const robotIcon = L.icon({
+                iconUrl: '/chatbot.png',
+                iconSize: [32, 32],
+                iconAnchor: [25, 16]
+            });
+
+            async function getLiveData() {
+
+                const xmlhttpRobots = new XMLHttpRequest();
+                const xmlhttpChargers = new XMLHttpRequest();
+
+                xmlhttpRobots.onload = function() {
+                    // Get the data from the API
+                    data = JSON.parse(this.responseText);
+                    const robots = data[0];
+                    // Load data into the map
+                    for (robot in robots) {
+                        if (!markers[robots[robot].id]) {
+                            markers[robots[robot].id] = L.marker([robots[robot].latitude, robots[robot].longitude], { icon: robotIcon }).addTo(map);
+                            markers[robots[robot].id].bindPopup("robot " + robots[robot].id);
+                        }
+                        markers[robots[robot].id].setLatLng([robots[robot].latitude, robots[robot].longitude]);
+                    };
+                };
+                xmlhttpRobots.open("GET", '/robot-data', true);
+                xmlhttpRobots.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xmlhttpRobots.send("x=");
+
+                xmlhttpChargers.onload = function() {
+                    // Get the data from the API
+                    data = JSON.parse(this.responseText);
+                    const chargers = data[0];
+                    // Load data into the map
+                    for (charger in chargers) {
+                        if (!circles[chargers[charger].id]) {
+                            circles[chargers[charger].id] = [
+                                L.circleMarker([
+                                    chargers[charger].latitude,
+                                    chargers[charger].longitude],
+                                    {
+                                        color: "red",
+                                        fillColor: 'red',
+                                        fillOpacity: .4,
+                                        radius: 12}).addTo(map)
+                                ,L.circleMarker([
+                                    chargers[charger].latitude,
+                                    chargers[charger].longitude],
+                                    {
+                                        color: "green",
+                                        fillColor: 'green',
+                                        fillOpacity: .4,
+                                        radius: 12}).addTo(map)];
+                            circles[chargers[charger].id][0].bindPopup("charger " + chargers[charger].id);
+                            circles[chargers[charger].id][1].bindPopup("charger " + chargers[charger].id);
+                        }
+                        if(chargers[charger].occupied === true)
+                        {
+                            circles[chargers[charger].id][0].setLatLng([
+                                    chargers[charger].latitude,
+                                    chargers[charger].longitude]);
+                            circles[chargers[charger].id][1].setLatLng([0,0]);
+                        }
+                        if(chargers[charger].occupied === false)
+                        {
+                            circles[chargers[charger].id][1].setLatLng([
+                                    chargers[charger].latitude,
+                                    chargers[charger].longitude]);
+                            circles[chargers[charger].id][0].setLatLng([0,0]);
+                        }
+                    };
+                };
+                xmlhttpChargers.open("GET", '/charger-data', true);
+                xmlhttpChargers.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xmlhttpChargers.send("x=");
+            }
+
+            getLiveData();
+            setInterval(getLiveData, 1000);
+        </script>
+    </body>
+</html>

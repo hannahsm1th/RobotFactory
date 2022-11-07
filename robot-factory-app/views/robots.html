@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width", initial-scale="1.0">
+        <title>Factory Robot simulation</title>
+        <link rel="stylesheet" href="css/styles.css">
+        <link rel="icon" type="image/png" href="/favicon-16x16.png">
+        <link rel="icon" type="image/png" href="/favicon-32x32.png">
+    </head>
+    <body>
+        <h2>robot data</h2>
+        <div id="robot-live">
+            <p id = "live-data"></p>
+        </div>
+
+        <script>
+            async function getRobotLiveData() {
+
+                const xmlhttp = new XMLHttpRequest();
+
+                xmlhttp.onload = function() {
+                    // Get the data from the API
+                    data = JSON.parse(this.responseText);
+                    const robots = data[0];
+                    // Create table headers
+                    text = "<table class=\"data-table\"><tr><th>robot id</th><th>time</th><th>battery charge</th><th>proximity alert</th><th>location</th></tr>";
+                    // Load data into the table
+                    for (robot in robots) {
+                        var imgURL = "/none.png";
+                        if (robots[robot].north === true) {
+                            imgURL = "/north.png";
+                        }
+                        if (robots[robot].south === true) {
+                            imgURL = "/south.png";
+                        }
+                        if (robots[robot].east === true) {
+                            imgURL = "/east.png";
+                        }
+                        if (robots[robot].west === true) {
+                            imgURL = "/west.png";
+                        }
+                        text += "<tr><td>"+ robots[robot].id
+                             + "</td><td>" + (new Date(robots[robot].timestamp)).toLocaleString('en-AU',{
+                                                                                            year: 'numeric',
+                                                                                            month: '2-digit',
+                                                                                            day: '2-digit',
+                                                                                            hour: '2-digit',
+                                                                                            minute: '2-digit',
+                                                                                            second: '2-digit',})
+                             + "</td><td>" + robots[robot].battery + "%"
+                             + "</td><td><img class=\"robot-proximity-alarm-image\" src=" + imgURL + " alt=\"\">"
+                             + "</td><td>" + robots[robot].latitude.toFixed(5) + ", " + robots[robot].longitude.toFixed(5)
+                             + "</td></tr>";
+                    }
+                    text += "</table>"
+                    document.getElementById("live-data").innerHTML = text;
+                }
+                xmlhttp.open("GET", '/robot-data', true);
+                xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xmlhttp.send("x=");
+            }
+            getRobotLiveData();
+
+            setInterval(getRobotLiveData, 1000);
+        </script>
+    </body>
+</html>

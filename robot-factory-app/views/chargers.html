@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width", initial-scale="1.0">
+        <title>Factory robot battery charger simulation</title>
+        <link rel="stylesheet" href="css/styles.css">
+        <link rel="icon" type="image/png" href="/favicon-16x16.png">
+        <link rel="icon" type="image/png" href="/favicon-32x32.png">
+    </head>
+    <body>
+        <h2>charger data</h2>
+        <div id="charger-live">
+            <p id = "live-data"></p>
+        </div>
+
+        <script>
+            async function getChargerLiveData() {
+
+                const xmlhttp = new XMLHttpRequest();
+
+                xmlhttp.onload = function() {
+                    // Get the data from the API
+                    data = JSON.parse(this.responseText);
+                    const chargers = data[0];
+                    // Create table headers
+                    text = "<table class=\"data-table\"><tr><th>charger id</th><th>time</th><th>occupied</th><th>location</th></tr>";
+                    // Load data into the table
+                    for (charger in chargers) {
+                        text += "<tr><td>"+ chargers[charger].id
+                             + "</td><td>" + (new Date(chargers[charger].timestamp)).toLocaleString('en-AU',{
+                                                                                            year: 'numeric',
+                                                                                            month: '2-digit',
+                                                                                            day: '2-digit',
+                                                                                            hour: '2-digit',
+                                                                                            minute: '2-digit',
+                                                                                            second: '2-digit',})
+                             + "</td><td>" + chargers[charger].occupied
+                             + "</td><td>" + chargers[charger].latitude.toFixed(5) + ", " + chargers[charger].longitude.toFixed(5)
+                             + "</td></tr>";
+                    }
+                    text += "</table>"
+                    document.getElementById("live-data").innerHTML = text;
+                }
+                xmlhttp.open("GET", '/charger-data', true);
+                xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xmlhttp.send("x=");
+            }
+            getChargerLiveData();
+
+            setInterval(getChargerLiveData, 1000);
+        </script>
+    </body>
+</html>

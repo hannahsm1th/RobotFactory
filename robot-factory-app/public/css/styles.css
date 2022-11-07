@@ -1,0 +1,161 @@
+p {
+    font-family: monospace;
+    margin-left: 2%;
+}
+h2 {
+    text-align: center;
+    color: rgb(97, 78, 182);
+    font-size: 3em;
+    font-family: monospace;
+}
+
+h3 {
+    text-align: left;
+    margin-left: 2%;
+    color: rgb(97, 78, 182);
+    font-size: 1.5em;
+    font-family: monospace;
+}
+
+h4 {
+    text-align: left;
+    margin-left: 2%;
+    color: rgb(97, 78, 182);
+    font-size: 1.3em;
+    font-style: italic;
+    font-family: monospace;
+}
+
+body {
+    background-color: rgb(232, 240, 243);
+}
+
+.wrapper {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
+.image-container {
+    position: relative;
+    max-width: 15%;
+    margin-left: 42.5%;
+    margin-right: 42.5%;
+}
+
+.robot-image {
+    width: 100%;
+    height: auto;
+    display:block;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 100%;
+    right: 0;
+    background-color: #000000a8;
+    overflow: hidden;
+    width: 0;
+    height: 100%;
+    transition: .5s ease;
+}
+
+.wrapper:hover .overlay{
+    width: 100%;
+    left: 0;
+}
+
+.overlay-text {
+    white-space: nowrap;
+    color: white;
+    font-size:2em;
+    position: absolute;
+    overflow: hidden;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family:monospace;
+}
+
+.robot-proximity-alarm-image {
+    height: 50px;
+    width: auto;
+}
+
+.data-table {
+    margin-left: 5%;
+    width: 90%;
+    background-color: rgba(184, 221, 234, 0.637);
+}
+
+.data-table td {
+    text-align: center;
+    font-size: 1.2em;
+    height: 65px;
+}
+
+.data-table tr:nth-child(even) {
+    background-color: rgba(0, 0, 0, 0.116);
+}
+
+.data-table th{
+    font-size: 1.2em;
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+    font-weight: lighter;
+    text-transform: uppercase;
+    height: 50px;
+}
+
+.data-table td:first-child {
+    font-weight: bolder;
+    font-size: 1.5em;
+}
+
+.data-table tr:hover {
+    background-color: rgba(255, 255, 255, 0.25);
+}
+
+.data-table tr:first-child {
+    background-color: rgb(184, 221, 234);
+}
+
+.data-table tr:first-child:hover {
+    background-color: rgba(255, 255, 255, 0);
+}
+
+#map {
+    margin-left: 10%;
+    width: 80%;
+    height: 500px;
+}
+
+#error {
+    font-family: monospace;
+    margin-left: 10%;
+    width: 80%;
+    font-size: 2em;
+}
+
+#attributions a, #directory a, #error a {
+    color:rgb(0, 0, 0);
+    text-decoration: none;
+    font-size: 1.2em;
+}
+
+#attributions, #directory {
+    font-family: monospace;
+}
+
+#attributions a:visited, #directory a:visited, #error a:visited {
+    color:rgb(0, 0, 0);
+}
+
+#error a:hover, #attributions a:hover, #directory a:hover {
+    color:rgb(236, 27, 255);
+}
+
+ul {
+    margin-left: 2%;
+    list-style:none;
+}
